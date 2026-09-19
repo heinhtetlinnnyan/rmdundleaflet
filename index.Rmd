@@ -1,0 +1,50 @@
+---
+title: "Places I've Been in Myanmar"
+author: "Hein"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(leaflet)
+```
+
+Green markers show places I have been. Orange markers show places I haven't been yet. Use the box in the top-right corner to show or hide each group.
+
+```{r map}
+places <- data.frame(
+  city = c("Yangon", "Mandalay", "Myitkyina", "Myaungmya", "Mawlamyine",
+           "Sittwe", "Dawei", "Lashio", "Kengtung (Kyaing Tong)", "Loikaw",
+           "Magway", "Pakokku"),
+  lat  = c(16.8661, 21.9588, 25.3833, 16.5834, 16.4905,
+           20.1462, 14.0828, 22.9359, 21.2917, 19.6742,
+           20.1544, 21.3333),
+  lng  = c(96.1951, 96.0891, 97.3964, 94.9039, 97.6283,
+           92.8987, 98.1940, 97.7498, 99.6083, 97.2094,
+           94.9453, 95.0833),
+  visited = c(TRUE, TRUE, TRUE, FALSE, FALSE,
+              TRUE, TRUE, TRUE, FALSE, FALSE,
+              TRUE, FALSE)
+)
+
+been   <- subset(places, visited)
+notyet <- subset(places, !visited)
+
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(data = been, lng = ~lng, lat = ~lat,
+                   label = ~city, popup = ~paste0("<b>", city, "</b><br>Been there"),
+                   radius = 9, color = "#1b9e77", stroke = FALSE,
+                   fillOpacity = 0.85, group = "Been there") %>%
+  addCircleMarkers(data = notyet, lng = ~lng, lat = ~lat,
+                   label = ~city, popup = ~paste0("<b>", city, "</b><br>Not yet"),
+                   radius = 9, color = "#d95f02", stroke = FALSE,
+                   fillOpacity = 0.85, group = "Not yet") %>%
+  addLegend(position = "bottomright",
+            colors = c("#1b9e77", "#d95f02"),
+            labels = c("Been there", "Not yet"),
+            title = "Visited?") %>%
+  addLayersControl(overlayGroups = c("Been there", "Not yet"),
+                   options = layersControlOptions(collapsed = FALSE))
+```
