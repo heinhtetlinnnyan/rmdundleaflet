@@ -1,0 +1,47 @@
+---
+title: "Car Weight and Fuel Efficiency"
+subtitle: "A look at mtcars"
+author: "Hein"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(plotly)
+```
+
+## The data
+
+- `mtcars`: 32 cars from the 1974 *Motor Trend* magazine
+- Question: do heavier cars use more fuel?
+- Each point is one car. Hover over a point to see which car it is.
+
+## Weight vs. miles per gallon
+
+```{r plot}
+cars <- mtcars
+cars$model <- rownames(cars)
+cars$cyl <- factor(cars$cyl)
+
+plot_ly(cars, x = ~wt, y = ~mpg, color = ~cyl,
+        type = "scatter", mode = "markers",
+        marker = list(size = 11, opacity = 0.8),
+        text = ~paste0("<b>", model, "</b><br>",
+                       "Weight: ", wt * 1000, " lbs<br>",
+                       "MPG: ", mpg, "<br>",
+                       "Horsepower: ", hp),
+        hoverinfo = "text") %>%
+  layout(xaxis = list(title = "Weight (1000 lbs)"),
+         yaxis = list(title = "Miles per gallon"),
+         legend = list(title = list(text = "Cylinders")))
+```
+
+## What it shows
+
+- Heavier cars get fewer miles per gallon.
+- 4-cylinder cars cluster at light weight and high MPG.
+- 8-cylinder cars are the heaviest and use more fuel.
+- Click a legend item to hide or show that group.
+
+## Thank you
